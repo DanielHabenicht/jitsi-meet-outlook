@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Collections.Generic;
+using Serilog;
 
 namespace JitsiMeetOutlook
 {
@@ -22,6 +23,7 @@ namespace JitsiMeetOutlook
             catch (Exception ex)
             {
                 //Do nothing
+                Log.Error(ex, "Error while reading Language JSON");
             }
 
         }

@@ -21,7 +21,7 @@ namespace JitsiMeetOutlook
 {
     public class JitsiApiService
     {
-        readonly HttpClient client = new HttpClient();
+        readonly HttpClient client;
 
         private readonly JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
@@ -31,8 +31,11 @@ namespace JitsiMeetOutlook
         private RequestCache<string> PINCache = new RequestCache<string>();
         private RequestCache<PhoneNumberListResponse> PhoneNumbersCache = new RequestCache<PhoneNumberListResponse>();
 
-        public JitsiApiService() {
+        public JitsiApiService()
+        {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            this.client = new HttpClient();
+            this.client.Timeout = TimeSpan.FromSeconds(5);
         }
 
         public async Task<string> getPIN(string roomName)
@@ -51,7 +54,7 @@ namespace JitsiMeetOutlook
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + conferenceMapperRequestUrl);
+                Utils.HandleErrorWithUserNotification(ex, "An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + conferenceMapperRequestUrl);
                 return "ERROR";
             }
         }
@@ -67,13 +70,14 @@ namespace JitsiMeetOutlook
                         response.EnsureSuccessStatusCode();
                         var responsestring = await response.Content.ReadAsStringAsync();
                         PhoneNumberListResponse phoneNumbers = JsonSerializer.Deserialize<PhoneNumberListResponse>(responsestring, serializerOptions);
+                        throw new Exception("test");
 
                         return phoneNumbers;
                     });
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + phoneNumberListRequestUrl);
+                Utils.HandleErrorWithUserNotification(ex, "An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + phoneNumberListRequestUrl);
                 return new PhoneNumberListResponse { Numbers = new Dictionary<string, List<string>>() };
             }
 
@@ -99,7 +103,7 @@ namespace JitsiMeetOutlook
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + Properties.Settings.Default.conferenceSchedulerEndpoint);
+                Utils.HandleErrorWithUserNotification(ex, "An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + Properties.Settings.Default.conferenceSchedulerEndpoint);
             }
         }
 

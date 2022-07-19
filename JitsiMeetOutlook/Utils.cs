@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,12 @@ namespace JitsiMeetOutlook
                 escapedDomain += "/";
             }
             return escapedDomain;
+        }
+
+        public static void HandleErrorWithUserNotification(Exception ex, string hint = null)
+        {
+            Log.Error(ex, hint ?? "Unexpected Error");
+            MessageBox.Show(hint ?? ("An Error occured within JitsiOutlook: " + ex.Message));
         }
 
         public static string GetUrl(string oldBody, string domain)
@@ -50,7 +57,7 @@ namespace JitsiMeetOutlook
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("An Error occured within JitsiOutlook: " + ex.Message);
+                        HandleErrorWithUserNotification(ex);
                     }
                 });
                 Thread ss = new Thread(s);
@@ -58,7 +65,7 @@ namespace JitsiMeetOutlook
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An Error occured within JitsiOutlook: " + ex.Message);
+                HandleErrorWithUserNotification(ex);
             }
         }
 

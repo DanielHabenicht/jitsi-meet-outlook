@@ -47,7 +47,7 @@ namespace JitsiMeetOutlook
             }
             catch (InvalidOperationException ex)
             {
-                MessageBox.Show(ex.Message);
+                Utils.HandleErrorWithUserNotification(ex);
             }
         }
 

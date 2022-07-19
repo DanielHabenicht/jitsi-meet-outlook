@@ -48,7 +48,7 @@ namespace JitsiMeetOutlook
             }
             catch (Exception ex)
             {
-                MessageBox.Show("The following error occurred: " + ex.Message);
+                Utils.HandleErrorWithUserNotification(ex);
             }
         }
     }

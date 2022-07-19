@@ -83,6 +83,10 @@ Set them via `PROXY_INFORMATION` variable, e.g.:
   </system.net>
 ```
 
+### Errors
+
+Any Errors that might occur during runtime should be logged in `C:\Users\<Username>\AppData\Local\JitsiMeetOutlookAddIn\error.log`.
+
 ## Roadmap
 
 The published code and installer is still at an early stage. Preliminarily, the following amendments are in the pipeline:

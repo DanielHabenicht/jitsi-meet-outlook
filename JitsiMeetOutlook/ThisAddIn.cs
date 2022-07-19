@@ -3,8 +3,11 @@ using Microsoft.Office.Interop.Outlook;
 using System;
 using System.IO;
 using System.Threading;
+using Serilog;
 using System.Windows.Forms;
 using Outlook = Microsoft.Office.Interop.Outlook;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace JitsiMeetOutlook
 {
@@ -18,6 +21,16 @@ namespace JitsiMeetOutlook
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
+            // Setup Logging
+            /// Returns "C:\Users\<Username>\AppData\Local\assembly\dl3\XXXXXXXXXXXXXX\XXXXXXXXXXXX\XXXXXXXXXXXXX\XXXXXXXXXXXX\xxx.dll"
+            string basepath = Regex.Match(Assembly.GetExecutingAssembly().Location, "(.*AppData\\\\Local)").Value;
+            var logpath = Path.Combine(basepath, "JitsiMeetOutlookAddIn\\error.log");
+            var log = new LoggerConfiguration()
+                .WriteTo.File(logpath)
+                .CreateLogger();
+            Log.Logger = log;
+
+            // Init
             checkFirstRunSettings();
             readLanguageJson();
 
@@ -107,7 +120,7 @@ namespace JitsiMeetOutlook
                         var scheduledConference = new ConferenceSchedulerMessage
                         {
 
-                            ConferenceName = Utils.findRoomId(item.Body,Properties.Settings.Default.Domain),
+                            ConferenceName = Utils.findRoomId(item.Body, Properties.Settings.Default.Domain),
                             Start = item.StartUTC,
                             End = item.EndUTC,
                             Recurrance = recurrencePattern
