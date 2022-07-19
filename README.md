@@ -112,6 +112,13 @@ Since this plug-in is brand new, any feedback would be most appreciated!
 
 ## Changelog
 
+### v0.7.1
+
+Enhancements:
+
+- Add Error logging
+- Reduce jitsi request timeouts to 5 seconds.
+
 ### v0.7.0
 
 Breaking:
