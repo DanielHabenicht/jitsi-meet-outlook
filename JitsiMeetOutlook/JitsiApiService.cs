@@ -70,7 +70,6 @@ namespace JitsiMeetOutlook
                         response.EnsureSuccessStatusCode();
                         var responsestring = await response.Content.ReadAsStringAsync();
                         PhoneNumberListResponse phoneNumbers = JsonSerializer.Deserialize<PhoneNumberListResponse>(responsestring, serializerOptions);
-                        throw new Exception("test");
 
                         return phoneNumbers;
                     });
