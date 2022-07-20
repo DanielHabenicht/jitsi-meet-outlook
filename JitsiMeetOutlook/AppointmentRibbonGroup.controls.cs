@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.RegularExpressions;
@@ -186,7 +186,8 @@ namespace JitsiMeetOutlook
             Word.Hyperlinks wLinks = wordDocument.Hyperlinks;
             for (int i = 1; i <= wLinks.Count; i++)
             {
-                if (wLinks[i].Address.Contains(oldDomain))
+                // Link must contain the domain and should not have a file ending
+                if (wLinks[i].Address.Contains(oldDomain) && !Regex.IsMatch(wLinks[i].Address, "\\..{1,5}$"))
                 {
                     var urlMatch = wLinks[i].TextToDisplay;
                     string urlNew;
