@@ -42,7 +42,8 @@ namespace JitsiMeetOutlook
                         newAppointment.End = dateEnd;
                     }
                 }
-
+                // Prepare Meeting Text here
+                await Utils.appendNewMeetingText(newAppointment, Utils.getNewRoomId());
                 // Display the appointment window
                 newAppointment.Display(false);
             }

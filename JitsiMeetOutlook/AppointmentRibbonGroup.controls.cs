@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.RegularExpressions;
@@ -42,10 +42,7 @@ namespace JitsiMeetOutlook
                 groupNewMeeting.Visible = true;
                 groupJitsiMeetControls.Visible = false;
             }
-
-
         }
-
 
         private async void InitializeRibbonWithCurrentData()
         {
@@ -76,7 +73,9 @@ namespace JitsiMeetOutlook
             else
             {
                 // New Meeting
-                await appendNewMeetingText();
+                roomId = Utils.getNewRoomId();
+                fieldRoomID.Text = roomId;
+                await Utils.appendNewMeetingText(this.appointmentItem, roomId);
                 if (Properties.Settings.Default.requireDisplayName)
                 {
                     toggleRequireName();
@@ -96,101 +95,6 @@ namespace JitsiMeetOutlook
 
         }
 
-        public async System.Threading.Tasks.Task appendNewMeetingText()
-        {
-            string roomId;
-            if (Properties.Settings.Default.roomID.Length == 0)
-            {
-                roomId = JitsiUrl.generateRandomId();
-            }
-            else
-            {
-                roomId = Properties.Settings.Default.roomID;
-            }
-            fieldRoomID.Text = roomId;
-
-
-            Word.Document wordDocument = appointmentItem.GetInspector.WordEditor as Word.Document;
-            wordDocument.Select();
-            var endSel = wordDocument.Application.Selection;
-            endSel.Collapse(Word.WdCollapseDirection.wdCollapseEnd);
-
-            var phoneNumbers = await Globals.ThisAddIn.JitsiApiService.getPhoneNumbers(roomId);
-            var pinNumber = await Globals.ThisAddIn.JitsiApiService.getPIN(roomId);
-            object missing = System.Reflection.Missing.Value;
-
-            var link = JitsiUrl.getUrlBase() + roomId;
-
-
-
-
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-            endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessage"));
-            endSel.EndKey(Word.WdUnits.wdLine);
-            wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
-            endSel.EndKey(Word.WdUnits.wdLine);
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-
-            if (phoneNumbers.NumbersEnabled)
-            {
-                // Add Phone Number Text if they are enabled
-                endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessagePhone"));
-                endSel.EndKey(Word.WdUnits.wdLine);
-                endSel.InsertAfter("\n");
-                endSel.MoveDown(Word.WdUnits.wdLine);
-                foreach (var entry in phoneNumbers.Numbers)
-                {
-                    endSel.InsertAfter(entry.Key + ": ");
-                    endSel.EndKey(Word.WdUnits.wdLine);
-                    for (int i = 0; i < entry.Value.Count; i++)
-                    {
-                        wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
-                        endSel.EndKey(Word.WdUnits.wdLine);
-                        if (i < entry.Value.Count - 1)
-                        {
-                            endSel.InsertAfter(",");
-                        }
-                    }
-                    endSel.InsertAfter("\n");
-                    endSel.MoveDown(Word.WdUnits.wdLine);
-                }
-                endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyPin") + pinNumber);
-                endSel.EndKey(Word.WdUnits.wdLine);
-            }
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-
-            IEnumerable<KeyValuePair<bool, string>> disclaimer = Utils.SplitToTextAndHyperlinks(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDisclaimer"));
-            foreach (var textblock in disclaimer)
-            {
-                if (textblock.Key)
-                {
-                    // Textblock is a link
-                    wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
-                    endSel.EndKey(Word.WdUnits.wdLine);
-                }
-                else
-                {
-                    // Textblock is no link
-                    endSel.InsertAfter(textblock.Value);
-                    endSel.EndKey(Word.WdUnits.wdLine);
-                }
-            }
-            endSel.EndKey(Word.WdUnits.wdLine);
-            endSel.InsertAfter("\n");
-            endSel.MoveDown(Word.WdUnits.wdLine);
-
-            wordDocument.Select();
-            endSel.Collapse(Word.WdCollapseDirection.wdCollapseStart);
-        }
 
         public async void setRoomId(string newRoomId)
         {

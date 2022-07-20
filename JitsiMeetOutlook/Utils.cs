@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Office.Interop.Word;
+using Microsoft.Office.Interop;
 using System.Windows.Forms;
 
 namespace JitsiMeetOutlook
@@ -43,6 +45,99 @@ namespace JitsiMeetOutlook
         {
             string roomId = Regex.Match(body, "(?<=" + escapeDomain(domain) + ")\\S+?(?=(#config|&config|\\s))").Value; // Match all non-blanks after jitsi url and before config or end
             return roomId;
+        }
+
+        public static string getNewRoomId()
+        {
+            if (Properties.Settings.Default.roomID.Length == 0)
+            {
+                return JitsiUrl.generateRandomId();
+            }
+            else
+            {
+                return Properties.Settings.Default.roomID;
+            }
+        }
+
+        public static async System.Threading.Tasks.Task appendNewMeetingText(Microsoft.Office.Interop.Outlook.AppointmentItem appointmentItem, string roomId)
+        {
+            Microsoft.Office.Interop.Word.Document wordDocument = appointmentItem.GetInspector.WordEditor as Microsoft.Office.Interop.Word.Document;
+            wordDocument.Select();
+            var endSel = wordDocument.Application.Selection;
+            endSel.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseEnd);
+
+            var phoneNumbers = await Globals.ThisAddIn.JitsiApiService.getPhoneNumbers(roomId);
+            var pinNumber = await Globals.ThisAddIn.JitsiApiService.getPIN(roomId);
+            object missing = System.Reflection.Missing.Value;
+
+            var link = JitsiUrl.getUrlBase() + roomId;
+
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessage"));
+            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
+            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+
+            if (phoneNumbers.NumbersEnabled)
+            {
+                // Add Phone Number Text if they are enabled
+                endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessagePhone"));
+                endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                endSel.InsertAfter("\n");
+                endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                foreach (var entry in phoneNumbers.Numbers)
+                {
+                    endSel.InsertAfter(entry.Key + ": ");
+                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                    for (int i = 0; i < entry.Value.Count; i++)
+                    {
+                        wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
+                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        if (i < entry.Value.Count - 1)
+                        {
+                            endSel.InsertAfter(",");
+                        }
+                    }
+                    endSel.InsertAfter("\n");
+                    endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                }
+                endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyPin") + pinNumber);
+                endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            }
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+
+            IEnumerable<KeyValuePair<bool, string>> disclaimer = Utils.SplitToTextAndHyperlinks(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDisclaimer"));
+            foreach (var textblock in disclaimer)
+            {
+                if (textblock.Key)
+                {
+                    // Textblock is a link
+                    wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
+                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                }
+                else
+                {
+                    // Textblock is no link
+                    endSel.InsertAfter(textblock.Value);
+                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                }
+            }
+            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+
+            wordDocument.Select();
+            endSel.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseStart);
         }
 
         public static void RunInThread(Action function)
