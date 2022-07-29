@@ -112,6 +112,12 @@ Since this plug-in is brand new, any feedback would be most appreciated!
 
 ## Changelog
 
+### v0.7.2
+
+Enhancements:
+
+- Add direct dial-in link to each phone number
+
 ### v0.7.1
 
 Enhancements:
