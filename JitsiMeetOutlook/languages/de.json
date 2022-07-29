@@ -6,7 +6,8 @@
   "appointmentItem": {
     "textBodyMessage": "\r\nJitsi-Meeting \r\n\nTreten Sie hier dem Meeting bei: ",
     "textBodyMessagePhone": "\n\rSie können sich auch über ein Telefon einwählen: ",
-    "textBodyPin": "\r\nWarten Sie den Signalton ab und geben Sie die Konferenznummer gefolgt von einem „#“ ein: ",
+    "textBodyPin": "\r\nWarten Sie den Signalton ab und geben Sie die Konferenznummer ein: ",
+    "textBodyDirectCallString": "Direktwahl",
     "textBodyDisclaimer": "\n\r"
   },
 

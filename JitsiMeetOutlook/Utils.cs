@@ -100,6 +100,14 @@ namespace JitsiMeetOutlook
                     {
                         wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
                         endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.InsertAfter(" (");
+                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+
+                        wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
+                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.InsertAfter(")");
+                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+
                         if (i < entry.Value.Count - 1)
                         {
                             endSel.InsertAfter(",");

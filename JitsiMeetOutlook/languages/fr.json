@@ -7,6 +7,7 @@
     "textBodyMessage": "\r\nJitsi-Meeting \r\n\nRejoignez la conférence : ",
     "textBodyMessagePhone": "\n\rNuméro de téléphone : ",
     "textBodyPin": "\r\nNuméro de conférence: ",
+    "textBodyDirectCallString": "Direct Dial-In",
     "textBodyDisclaimer": "\n\r"
   },
 
