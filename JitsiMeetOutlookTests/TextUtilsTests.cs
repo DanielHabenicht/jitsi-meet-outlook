@@ -102,5 +102,29 @@ namespace JitsiMeetOutlook.Tests
                 new KeyValuePair<bool, string>( false, "."),
             });
         }
+
+        [TestMethod()]
+        public void ChangeSettingTestTrue()
+        {
+            var url = "https://meet.jit.si/UnderlyingDescentsPledgeOverseas";
+            var newUrl = Utils.ChangeSetting(url, "test");
+            newUrl.Should().Be("https://meet.jit.si/UnderlyingDescentsPledgeOverseas#config.test=true");
+        }
+
+        [TestMethod()]
+        public void ChangeSettingTestFalse()
+        {
+            var url = "https://meet.jit.si/UnderlyingDescentsPledgeOverseas#config.test=true";
+            var newUrl = Utils.ChangeSetting(url, "test");
+            newUrl.Should().Be("https://meet.jit.si/UnderlyingDescentsPledgeOverseas");
+        }
+
+        [TestMethod()]
+        public void ChangeSettingTestMultiple()
+        {
+            var url = "https://meet.jit.si/UnderlyingDescentsPledgeOverseas#config.test=true";
+            var newUrl = Utils.ChangeSetting(url, "test2");
+            newUrl.Should().Be("https://meet.jit.si/UnderlyingDescentsPledgeOverseas#config.test=true&config.test2=true");
+        }
     }
 }

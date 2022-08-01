@@ -317,6 +317,7 @@
         <Compile Include="CalendarRibbonButton.language.cs">
             <SubType>Component</SubType>
         </Compile>
+        <Compile Include="Constants.cs" />
         <Compile Include="Entities\ConferenceMapperResponse.cs" />
         <Compile Include="Entities\ConferenceSchedulerMessage.cs" />
         <Compile Include="Entities\PhoneNumberListResponse.cs" />

@@ -106,7 +106,7 @@ namespace JitsiMeetOutlook
             {
                 AppointmentItem item = appointment as AppointmentItem;
 
-                if (item.Location == "Jitsi Meet")
+                if (item.Location == Constants.MeetingLocationIdentifier)
                 {
                     Utils.RunInThread(() =>
                     {

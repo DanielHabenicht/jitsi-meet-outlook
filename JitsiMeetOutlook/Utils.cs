@@ -71,6 +71,18 @@ namespace JitsiMeetOutlook
             object missing = System.Reflection.Missing.Value;
 
             var link = JitsiUrl.getUrlBase() + roomId;
+            if (Properties.Settings.Default.requireDisplayName)
+            {
+                link = ChangeSetting(link, Constants.JitsiConfig.RequireDisplayName);
+            }
+            if (Properties.Settings.Default.startWithAudioMuted)
+            {
+                link = ChangeSetting(link, Constants.JitsiConfig.AudioMuted);
+            }
+            if (Properties.Settings.Default.startWithVideoMuted)
+            {
+                link = ChangeSetting(link, Constants.JitsiConfig.VideoMuted);
+            }
 
             endSel.InsertAfter("\n");
             endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
@@ -124,13 +136,15 @@ namespace JitsiMeetOutlook
             endSel.InsertAfter("\n");
             endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
 
+            endSel.Font.Size = Constants.DisclaimerTextSize;
             IEnumerable<KeyValuePair<bool, string>> disclaimer = Utils.SplitToTextAndHyperlinks(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDisclaimer"));
             foreach (var textblock in disclaimer)
             {
                 if (textblock.Key)
                 {
                     // Textblock is a link
-                    wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
+                    var hyperlink = wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
+                    hyperlink.Range.Font.Size = Constants.DisclaimerTextSize;
                     endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
                 }
                 else
@@ -147,6 +161,29 @@ namespace JitsiMeetOutlook
             wordDocument.Select();
             endSel.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseStart);
         }
+
+        public static string ChangeSetting(string url, string setting)
+        {
+            var urlNew = string.Empty;
+            if (Utils.SettingIsActive(url, setting))
+            {
+                urlNew = Regex.Replace(url, "(#|&)config\\." + setting + "=true", "");
+            }
+            else
+            {
+                // Otherwise add
+                if (url.Contains("#config"))
+                {
+                    urlNew = url + "&config." + setting + "=true";
+                }
+                else
+                {
+                    urlNew = url + "#config." + setting + "=true";
+                }
+            }
+            return urlNew;
+        }
+
 
         public static void RunInThread(Action function)
         {

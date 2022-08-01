@@ -28,7 +28,7 @@ namespace JitsiMeetOutlook
             Outlook.Inspector inspector = (Outlook.Inspector)this.Context;
             appointmentItem = inspector.CurrentItem as Outlook.AppointmentItem;
 
-            if (appointmentItem.Location == "Jitsi Meet")
+            if (appointmentItem.Location == Constants.MeetingLocationIdentifier)
             {
                 groupJitsiMeetControls.Visible = true;
                 groupNewMeeting.Visible = false;
@@ -54,21 +54,6 @@ namespace JitsiMeetOutlook
                 {
                     fieldRoomID.Text = roomId;
                 }
-
-                var url = Utils.GetUrl(appointmentItem.Body, oldDomain);
-                if (Utils.SettingIsActive(url, "requireDisplayName"))
-                {
-                    buttonRequireDisplayName.Checked = true;
-                }
-                if (Utils.SettingIsActive(url, "startWithAudioMuted"))
-                {
-                    buttonStartWithAudioMuted.Checked = true;
-                }
-                if (Utils.SettingIsActive(url, "startWithVideoMuted"))
-                {
-                    buttonStartWithVideoMuted.Checked = true;
-                }
-
             }
             else
             {
@@ -76,21 +61,19 @@ namespace JitsiMeetOutlook
                 roomId = Utils.getNewRoomId();
                 fieldRoomID.Text = roomId;
                 await Utils.appendNewMeetingText(this.appointmentItem, roomId);
-                if (Properties.Settings.Default.requireDisplayName)
-                {
-                    toggleRequireName();
-                    buttonRequireDisplayName.Checked = true;
-                }
-                if (Properties.Settings.Default.startWithAudioMuted)
-                {
-                    toggleMuteOnStart();
-                    buttonStartWithAudioMuted.Checked = true;
-                }
-                if (Properties.Settings.Default.startWithVideoMuted)
-                {
-                    toggleVideoOnStart();
-                    buttonStartWithVideoMuted.Checked = true;
-                }
+            }
+            var url = Utils.GetUrl(appointmentItem.Body, oldDomain);
+            if (Utils.SettingIsActive(url, "requireDisplayName"))
+            {
+                buttonRequireDisplayName.Checked = true;
+            }
+            if (Utils.SettingIsActive(url, "startWithAudioMuted"))
+            {
+                buttonStartWithAudioMuted.Checked = true;
+            }
+            if (Utils.SettingIsActive(url, "startWithVideoMuted"))
+            {
+                buttonStartWithVideoMuted.Checked = true;
             }
 
         }
@@ -158,22 +141,22 @@ namespace JitsiMeetOutlook
 
         public void toggleMuteOnStart()
         {
-            toggleSetting("startWithAudioMuted");
+            toggleSetting(Constants.JitsiConfig.AudioMuted);
         }
         public void toggleVideoOnStart()
         {
-            toggleSetting("startWithVideoMuted");
+            toggleSetting(Constants.JitsiConfig.VideoMuted);
         }
 
         public void toggleRequireName()
         {
-            toggleSetting("requireDisplayName");
+            toggleSetting(Constants.JitsiConfig.RequireDisplayName);
         }
 
 
         private void addJitsiMeeting()
         {
-            appointmentItem.Location = "Jitsi Meet";
+            appointmentItem.Location = Constants.MeetingLocationIdentifier;
             initialise();
 
         }
@@ -190,23 +173,7 @@ namespace JitsiMeetOutlook
                 if (wLinks[i].Address.Contains(oldDomain) && !Regex.IsMatch(wLinks[i].Address, "\\..{1,5}$"))
                 {
                     var urlMatch = wLinks[i].TextToDisplay;
-                    string urlNew;
-                    if (Utils.SettingIsActive(urlMatch, setting))
-                    {
-                        urlNew = Regex.Replace(urlMatch, "(#|&)config\\." + setting + "=true", "");
-                    }
-                    else
-                    {
-                        // Otherwise add
-                        if (urlMatch.Contains("#config"))
-                        {
-                            urlNew = urlMatch + "&config." + setting + "=true";
-                        }
-                        else
-                        {
-                            urlNew = urlMatch + "#config." + setting + "=true";
-                        }
-                    }
+                    var urlNew = Utils.ChangeSetting(urlMatch, setting);
                     wLinks[i].Address = fixUrl(urlNew);
                     wLinks[i].TextToDisplay = fixUrl(urlNew);
                 }

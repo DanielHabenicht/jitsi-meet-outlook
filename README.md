@@ -112,6 +112,13 @@ Since this plug-in is brand new, any feedback would be most appreciated!
 
 ## Changelog
 
+### v0.7.3
+
+Enhancements:
+
+- fix bug that did not include default settings into link (on creating the meeting)
+- use font size 8 for disclaimer
+
 ### v0.7.2
 
 Enhancements:
