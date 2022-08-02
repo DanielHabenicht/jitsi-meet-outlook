@@ -112,6 +112,15 @@ Since this plug-in is brand new, any feedback would be most appreciated!
 
 ## Changelog
 
+### v0.7.4
+
+Enhancements:
+
+- fix bug where settings buttons and link where out of sync
+- use font size 10 for main body
+- make font configurable
+- fix token not yet valid, by adding buffer time (1min)
+
 ### v0.7.3
 
 Enhancements:
