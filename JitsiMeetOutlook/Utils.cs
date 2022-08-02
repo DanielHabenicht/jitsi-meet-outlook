@@ -97,6 +97,7 @@ namespace JitsiMeetOutlook
             endSel.EndKey(WdUnits.wdLine);
             var hyperlinkMeeting = wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
             hyperlinkMeeting.Range.Font.Size = Constants.MainBodyTextSize;
+            hyperlinkMeeting.Range.Font.Name = Constants.Font;
             endSel.EndKey(WdUnits.wdLine);
             endSel.InsertAfter("\n");
             endSel.MoveDown(WdUnits.wdLine);
@@ -116,6 +117,7 @@ namespace JitsiMeetOutlook
                     {
                         var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
                         hyperlinkTel.Range.Font.Size = Constants.MainBodyTextSize;
+                        hyperlinkTel.Range.Font.Name = Constants.Font;
 
                         endSel.EndKey(WdUnits.wdLine);
                         endSel.InsertAfter(" (");
@@ -123,6 +125,7 @@ namespace JitsiMeetOutlook
 
                         var hyperlinkTelDirect = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
                         hyperlinkTelDirect.Range.Font.Size = Constants.MainBodyTextSize;
+                        hyperlinkTelDirect.Range.Font.Name = Constants.Font;
                         endSel.EndKey(WdUnits.wdLine);
                         endSel.InsertAfter(")");
                         endSel.EndKey(WdUnits.wdLine);
@@ -151,6 +154,7 @@ namespace JitsiMeetOutlook
                     // Textblock is a link
                     var hyperlink = wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
                     hyperlink.Range.Font.Size = Constants.MainBodyTextSize;
+                    hyperlink.Range.Font.Name = Constants.Font;
                     endSel.EndKey(WdUnits.wdLine);
                 }
                 else
@@ -176,6 +180,7 @@ namespace JitsiMeetOutlook
                     // Textblock is a link
                     var hyperlink = wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
                     hyperlink.Range.Font.Size = Constants.DisclaimerTextSize;
+                    hyperlink.Range.Font.Name = Constants.Font;
                     endSel.EndKey(WdUnits.wdLine);
                 }
                 else
