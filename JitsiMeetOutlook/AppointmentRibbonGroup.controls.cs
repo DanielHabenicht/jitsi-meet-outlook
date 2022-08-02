@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Outlook = Microsoft.Office.Interop.Outlook;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.RegularExpressions;
@@ -63,15 +63,15 @@ namespace JitsiMeetOutlook
                 await Utils.appendNewMeetingText(this.appointmentItem, roomId);
             }
             var url = Utils.GetUrl(appointmentItem.Body, oldDomain);
-            if (Utils.SettingIsActive(url, "requireDisplayName"))
+            if (Utils.SettingIsActive(url, Constants.JitsiConfig.RequireDisplayName))
             {
                 buttonRequireDisplayName.Checked = true;
             }
-            if (Utils.SettingIsActive(url, "startWithAudioMuted"))
+            if (Utils.SettingIsActive(url, Constants.JitsiConfig.AudioMuted))
             {
                 buttonStartWithAudioMuted.Checked = true;
             }
-            if (Utils.SettingIsActive(url, "startWithVideoMuted"))
+            if (Utils.SettingIsActive(url, Constants.JitsiConfig.VideoMuted))
             {
                 buttonStartWithVideoMuted.Checked = true;
             }
