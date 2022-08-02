@@ -118,8 +118,8 @@ namespace JitsiMeetOutlook
                 {
                     ["admin"] = true,
                 },
-                IssuedAt = now,
-                NotBefore = now,
+                IssuedAt = now - TimeSpan.FromMinutes(1),
+                NotBefore = now - TimeSpan.FromMinutes(1),
                 Expires = now + TimeSpan.FromDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature)
             };
