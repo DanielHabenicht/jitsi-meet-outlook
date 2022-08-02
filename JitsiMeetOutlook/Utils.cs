@@ -1,4 +1,4 @@
-using Serilog;
+﻿using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,44 +88,44 @@ namespace JitsiMeetOutlook
             }
 
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
             endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessage"));
-            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.EndKey(WdUnits.wdLine);
             var hyperlinkMeeting = wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
             hyperlinkMeeting.Range.Font.Size = Constants.MainBodyTextSize;
-            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.EndKey(WdUnits.wdLine);
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
 
             if (phoneNumbers.NumbersEnabled)
             {
                 // Add Phone Number Text if they are enabled
                 endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessagePhone"));
-                endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                endSel.EndKey(WdUnits.wdLine);
                 endSel.InsertAfter("\n");
-                endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                endSel.MoveDown(WdUnits.wdLine);
                 foreach (var entry in phoneNumbers.Numbers)
                 {
                     endSel.InsertAfter(entry.Key + ": ");
-                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                    endSel.EndKey(WdUnits.wdLine);
                     for (int i = 0; i < entry.Value.Count; i++)
                     {
                         var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
                         hyperlinkTel.Range.Font.Size = Constants.MainBodyTextSize;
 
-                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.EndKey(WdUnits.wdLine);
                         endSel.InsertAfter(" (");
-                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.EndKey(WdUnits.wdLine);
 
                         var hyperlinkTelDirect = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
                         hyperlinkTelDirect.Range.Font.Size = Constants.MainBodyTextSize;
-                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.EndKey(WdUnits.wdLine);
                         endSel.InsertAfter(")");
-                        endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                        endSel.EndKey(WdUnits.wdLine);
 
                         if (i < entry.Value.Count - 1)
                         {
@@ -133,15 +133,39 @@ namespace JitsiMeetOutlook
                         }
                     }
                     endSel.InsertAfter("\n");
-                    endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                    endSel.MoveDown(WdUnits.wdLine);
                 }
                 endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyPin") + pinNumber);
-                endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                endSel.EndKey(WdUnits.wdLine);
             }
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
+
+            IEnumerable<KeyValuePair<bool, string>> beforeDisclaimer = Utils.SplitToTextAndHyperlinks(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyBeforeDisclaimer"));
+            foreach (var textblock in beforeDisclaimer)
+            {
+                if (textblock.Key)
+                {
+                    // Textblock is a link
+                    var hyperlink = wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
+                    hyperlink.Range.Font.Size = Constants.MainBodyTextSize;
+                    endSel.EndKey(WdUnits.wdLine);
+                }
+                else
+                {
+                    // Textblock is no link
+                    endSel.InsertAfter(textblock.Value);
+                    endSel.EndKey(WdUnits.wdLine);
+                }
+            }
+
+
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(WdUnits.wdLine);
+            endSel.InsertAfter("\n");
+            endSel.MoveDown(WdUnits.wdLine);
 
             endSel.Font.Size = Constants.DisclaimerTextSize;
             IEnumerable<KeyValuePair<bool, string>> disclaimer = Utils.SplitToTextAndHyperlinks(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDisclaimer"));
@@ -152,18 +176,18 @@ namespace JitsiMeetOutlook
                     // Textblock is a link
                     var hyperlink = wordDocument.Hyperlinks.Add(endSel.Range, textblock.Value, ref missing, ref missing, textblock.Value, ref missing);
                     hyperlink.Range.Font.Size = Constants.DisclaimerTextSize;
-                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                    endSel.EndKey(WdUnits.wdLine);
                 }
                 else
                 {
                     // Textblock is no link
                     endSel.InsertAfter(textblock.Value);
-                    endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+                    endSel.EndKey(WdUnits.wdLine);
                 }
             }
-            endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.EndKey(WdUnits.wdLine);
             endSel.InsertAfter("\n");
-            endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
+            endSel.MoveDown(WdUnits.wdLine);
 
             wordDocument.Select();
             endSel.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseStart);
