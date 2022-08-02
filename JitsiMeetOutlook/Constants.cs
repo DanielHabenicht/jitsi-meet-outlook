@@ -9,6 +9,8 @@ namespace JitsiMeetOutlook
     public static class Constants
     {
         public static readonly string MeetingLocationIdentifier = "Jitsi Meet";
+        public static readonly string Font = "Calibri (Body)";
+        public static readonly int MainBodyTextSize = 10;
         public static readonly int DisclaimerTextSize = 8;
 
         public static class JitsiConfig

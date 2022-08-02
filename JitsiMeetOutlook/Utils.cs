@@ -64,7 +64,10 @@ namespace JitsiMeetOutlook
             Microsoft.Office.Interop.Word.Document wordDocument = appointmentItem.GetInspector.WordEditor as Microsoft.Office.Interop.Word.Document;
             wordDocument.Select();
             var endSel = wordDocument.Application.Selection;
-            endSel.Collapse(Microsoft.Office.Interop.Word.WdCollapseDirection.wdCollapseEnd);
+            endSel.Collapse(WdCollapseDirection.wdCollapseEnd);
+
+            endSel.Font.Size = Constants.MainBodyTextSize;
+            endSel.Font.Name = Constants.Font;
 
             var phoneNumbers = await Globals.ThisAddIn.JitsiApiService.getPhoneNumbers(roomId);
             var pinNumber = await Globals.ThisAddIn.JitsiApiService.getPIN(roomId);
@@ -92,7 +95,8 @@ namespace JitsiMeetOutlook
             endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
             endSel.InsertAfter(Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyMessage"));
             endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
-            wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
+            var hyperlinkMeeting = wordDocument.Hyperlinks.Add(endSel.Range, link, ref missing, ref missing, link, ref missing);
+            hyperlinkMeeting.Range.Font.Size = Constants.MainBodyTextSize;
             endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
             endSel.InsertAfter("\n");
             endSel.MoveDown(Microsoft.Office.Interop.Word.WdUnits.wdLine);
@@ -110,12 +114,15 @@ namespace JitsiMeetOutlook
                     endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
                     for (int i = 0; i < entry.Value.Count; i++)
                     {
-                        wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
+                        var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
+                        hyperlinkTel.Range.Font.Size = Constants.MainBodyTextSize;
+
                         endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
                         endSel.InsertAfter(" (");
                         endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
 
-                        wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
+                        var hyperlinkTelDirect = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
+                        hyperlinkTelDirect.Range.Font.Size = Constants.MainBodyTextSize;
                         endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
                         endSel.InsertAfter(")");
                         endSel.EndKey(Microsoft.Office.Interop.Word.WdUnits.wdLine);
