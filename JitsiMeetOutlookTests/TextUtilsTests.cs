@@ -58,6 +58,14 @@ namespace JitsiMeetOutlook.Tests
         }
 
         [TestMethod()]
+        public void GetUrlTest3()
+        {
+            var body = "\r\n \r\n \r\n \r\nJitsi - Meeting \r\n \r\nTreten Sie hier dem Meeting bei: https://meet.jit.si//CruelPrivilegesHideWearily#config.startWithAudioMuted=true&config.startWithVideoMuted=true <http://meet.jit.si//CruelPrivilegesHideWearily#config.startWithAudioMuted=true&config.startWithVideoMuted=true> \r\n \r\n \r\nSie können sich auch über ein Telefon einwählen: \r\nDE: +49-123-456789 <tel:+49-123-456789>  (Direktwahl <tel:+49-123-456789,,,41528769%23> )\r\n \r\nAnschließend werden Sie aufgefordert, die Konferenznummer einzugeben: 41528769\r\n \r\nSie benötigen Unterstützung bei der Durchführung einer Jitsi-Videokonferenz? Hier finden Sie eine Benutzeranleitung: https://example.com.\r\n \r\n________________________________________________________________________________\r\n \r\nDatenschutzhinweis:\r\n \r\nLorem Ipsum   \r\n \r\n ";
+            var url = Utils.GetUrl(body, "meet.jit.si");
+            Assert.AreEqual("https://meet.jit.si//CruelPrivilegesHideWearily#config.startWithAudioMuted=true&config.startWithVideoMuted=true", url);
+        }
+
+        [TestMethod()]
         public void SplitToTextAndHyperlinks()
         {
             var text = "test https://meet.jit.si/UnderlyingDescentsPledgeOverseas with links https://cool.link everywhere https://example.com interesting end";
