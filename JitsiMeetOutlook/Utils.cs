@@ -115,19 +115,9 @@ namespace JitsiMeetOutlook
                     endSel.EndKey(WdUnits.wdLine);
                     for (int i = 0; i < entry.Value.Count; i++)
                     {
-                        var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i], ref missing, ref missing, entry.Value[i], ref missing);
+                        var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i].Replace("-", "") + ",,," + pinNumber + "%23", ref missing, ref missing, entry.Value[i] + ",,," + pinNumber + "#", ref missing);
                         hyperlinkTel.Range.Font.Size = Constants.MainBodyTextSize;
                         hyperlinkTel.Range.Font.Name = Constants.Font;
-
-                        endSel.EndKey(WdUnits.wdLine);
-                        endSel.InsertAfter(" (");
-                        endSel.EndKey(WdUnits.wdLine);
-
-                        var hyperlinkTelDirect = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i] + ",,," + pinNumber + "%23", ref missing, ref missing, Globals.ThisAddIn.getElementTranslation("appointmentItem", "textBodyDirectCallString"), ref missing);
-                        hyperlinkTelDirect.Range.Font.Size = Constants.MainBodyTextSize;
-                        hyperlinkTelDirect.Range.Font.Name = Constants.Font;
-                        endSel.EndKey(WdUnits.wdLine);
-                        endSel.InsertAfter(")");
                         endSel.EndKey(WdUnits.wdLine);
 
                         if (i < entry.Value.Count - 1)
