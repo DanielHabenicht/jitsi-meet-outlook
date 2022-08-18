@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -11,27 +12,39 @@ namespace JitsiMeetOutlook.Entities
     /// PhoneNumberList Endpoint Response
     /// Derived from https://github.com/jitsi/jitsi-meet/blob/master/resources/cloud-api.swagger
     /// </summary>
-    public class PhoneNumberListResponse
+    public class PhoneNumberListResponse : IValidatableObject
     {
         /// <summary>
         /// Message from the server.
         /// </summary>
         /// <value></value>
-        [JsonPropertyName("message")]
         public string Message { get; set; }
 
         /// <summary>
         /// Switch whether the numbers are enabled.
         /// </summary>
         /// <value></value>
-        [JsonPropertyName("numbersEnabled")]
+
         public bool NumbersEnabled { get; set; }
 
         /// <summary>
         /// Dictionary of Numbers.
         /// CountryCode - Number
         /// </summary>
-        [JsonPropertyName("numbers")]
         public Dictionary<string, List<string>> Numbers { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (Message == null)
+            {
+                results.Add(new ValidationResult("Message must be set"));
+            };
+            if (Numbers == null)
+            {
+                results.Add(new ValidationResult("Numbers must be set"));
+            }
+            return results;
+        }
     }
 }

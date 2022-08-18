@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 
 namespace JitsiMeetOutlook
 {
@@ -26,6 +27,7 @@ namespace JitsiMeetOutlook
         private readonly JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            PropertyNameCaseInsensitive = true
         };
 
         private RequestCache<string> PINCache = new RequestCache<string>();
@@ -71,13 +73,22 @@ namespace JitsiMeetOutlook
                         var responsestring = await response.Content.ReadAsStringAsync();
                         PhoneNumberListResponse phoneNumbers = JsonSerializer.Deserialize<PhoneNumberListResponse>(responsestring, serializerOptions);
 
+                        var context = new ValidationContext(phoneNumbers, serviceProvider: null, items: null);
+                        var validationResults = new List<ValidationResult>();
+                        bool isValid = Validator.TryValidateObject(phoneNumbers, context, validationResults, true);
+
+                        if (!isValid)
+                        {
+                            throw new Exception($"PhoneNumberListReponse is incomplete: {responsestring}, {string.Join(", ", validationResults.Select(r => r.ToString()))}");
+                        }
+
                         return phoneNumbers;
                     });
             }
             catch (Exception ex)
             {
                 Utils.HandleErrorWithUserNotification(ex, "An Error occured within JitsiOutlook: " + ex.Message + ex.InnerException?.Message + ex.InnerException?.InnerException?.Message + " for " + phoneNumberListRequestUrl);
-                return new PhoneNumberListResponse { Numbers = new Dictionary<string, List<string>>() };
+                return new PhoneNumberListResponse { Numbers = new Dictionary<string, List<string>>(), Message = "ERROR", NumbersEnabled = false };
             }
 
         }
