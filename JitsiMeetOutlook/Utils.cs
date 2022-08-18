@@ -115,7 +115,7 @@ namespace JitsiMeetOutlook
                     endSel.EndKey(WdUnits.wdLine);
                     for (int i = 0; i < entry.Value.Count; i++)
                     {
-                        var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i].Replace("-", "") + ",,," + pinNumber + "%23", ref missing, ref missing, entry.Value[i] + ",,," + pinNumber + "#", ref missing);
+                        var hyperlinkTel = wordDocument.Hyperlinks.Add(endSel.Range, "tel:" + entry.Value[i].Replace("-", "") + ",,," + pinNumber, ref missing, ref missing, entry.Value[i] + ",,," + pinNumber, ref missing);
                         hyperlinkTel.Range.Font.Size = Constants.MainBodyTextSize;
                         hyperlinkTel.Range.Font.Name = Constants.Font;
                         endSel.EndKey(WdUnits.wdLine);
