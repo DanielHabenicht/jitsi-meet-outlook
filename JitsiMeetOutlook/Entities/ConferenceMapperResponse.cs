@@ -32,7 +32,7 @@ namespace JitsiMeetOutlook.Entities
         /// </summary>
         /// <value></value>
         [JsonPropertyName("id")]
-        public ulong Id { get; set; }
+        public string Id { get; set; }
 
         [JsonIgnore]
         public string IdString => Id.ToString();
