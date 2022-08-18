@@ -37,6 +37,7 @@ namespace JitsiMeetOutlook
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             this.client = new HttpClient();
+            this.client.DefaultRequestHeaders.Add("User-Agent", "JitsiMeetOutlook-Plugin");
             this.client.Timeout = TimeSpan.FromSeconds(5);
         }
 
